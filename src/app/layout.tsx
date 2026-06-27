@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
 import QueryProvider from "@/providers/QueryProvider";
-import Navbar from "@/components/Navbar";
+import PageShell from "@/components/PageShell";
 
 const outfit = Outfit({ subsets: ["latin"] });
 
@@ -20,8 +20,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={outfit.className} suppressHydrationWarning>
         <QueryProvider>
-          <Navbar />
-          {children}
+          <PageShell>{children}</PageShell>
         </QueryProvider>
       </body>
     </html>

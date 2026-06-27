@@ -11,24 +11,48 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
+  id        String    @id @default(uuid())
+  email     String    @unique
   password  String
   name      String?
-  avatar    String?  @db.Text
+  avatar    String?   @db.Text
   phone     String?
-  address   String?  @db.Text
+  address   String?   @db.Text
   gender    String?
   dob       DateTime?
   settings  Json?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  role      Role      @default(BUYER)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  shop      Shop?     @relation("ShopOwner")
+
+  @@schema("public")
+}
+
+model Shop {
+  id          String     @id @default(uuid())
+  ownerId     String     @unique
+  owner       User       @relation("ShopOwner", fields: [ownerId], references: [id])
+  name        String
+  slug        String     @unique
+  description String?    @db.Text
+  logo        String?    @db.Text
+  banner      String?    @db.Text
+  category    String
+  rating      Float      @default(0)
+  status      ShopStatus @default(PENDING)
+  products    Product[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 
   @@schema("public")
 }
 
 model Product {
   id          String   @id @default(uuid())
+  shopId      String?
+  shop        Shop?    @relation(fields: [shopId], references: [id])
   name        String
   description String
   price       Float
@@ -40,6 +64,22 @@ model Product {
   updatedAt   DateTime @updatedAt
 
   @@schema("product")
+}
+
+enum Role {
+  BUYER
+  SELLER
+  SUPERADMIN
+
+  @@schema("public")
+}
+
+enum ShopStatus {
+  PENDING
+  ACTIVE
+  REJECTED
+
+  @@schema("public")
 }
 
 model Cart {

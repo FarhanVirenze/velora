@@ -51,7 +51,7 @@ export default function Navbar() {
       setIsLoggedIn(!!token);
 
       // Global Auth Guard
-      const publicPaths = ['/login', '/register'];
+      const publicPaths = ['/login', '/register', '/admin/login'];
       if (!token && !publicPaths.includes(pathname)) {
         setShowAuthWarning(true);
         setTimeout(() => {

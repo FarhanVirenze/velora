@@ -1,8 +1,12 @@
 require('dotenv').config({ path: '.env.local' })
 const { PrismaClient } = require('@prisma/client')
+const bcrypt = require('bcryptjs')
 const prisma = new PrismaClient()
 
 async function main() {
+  const adminPassword = await bcrypt.hash('admin123', 10)
+  const sellerPassword = await bcrypt.hash('seller123', 10)
+
   const products = [
     {
       name: 'Classic Leather Jacket',
@@ -277,8 +281,42 @@ async function main() {
   ]
 
   await prisma.product.deleteMany({})
+  await prisma.shop.deleteMany({})
+  await prisma.user.deleteMany({})
+
+  const adminUser = await prisma.user.create({
+    data: {
+      email: 'admin@velora.com',
+      password: adminPassword,
+      name: 'Velora Superadmin',
+      role: 'SUPERADMIN',
+    },
+  })
+
+  const sellerUser = await prisma.user.create({
+    data: {
+      email: 'seller@velora.com',
+      password: sellerPassword,
+      name: 'Velora Seller',
+      role: 'SELLER',
+    },
+  })
+
+  await prisma.shop.create({
+    data: {
+      ownerId: sellerUser.id,
+      name: 'Velora Studio',
+      slug: 'velora-studio',
+      description: 'Shop resmi penjual Velora Studio untuk produk lifestyle dan elektronik.',
+      category: 'Electronics',
+      status: 'ACTIVE',
+    },
+  })
+
   await prisma.product.createMany({ data: products })
   console.log(`${products.length} products seeded.`)
+  console.log('Admin user: admin@velora.com / admin123')
+  console.log('Seller user: seller@velora.com / seller123')
 }
 
 main()

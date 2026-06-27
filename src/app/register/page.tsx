@@ -10,6 +10,9 @@ export default function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState('BUYER');
+  const [storeName, setStoreName] = useState("");
+  const [storeCategory, setStoreCategory] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -27,7 +30,7 @@ export default function RegisterPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ name, email, password, role, storeName, storeCategory }),
       });
 
       if (!response.ok) {
@@ -54,7 +57,7 @@ export default function RegisterPage() {
   return (
     <main className="min-h-screen flex">
       {/* Left Panel: Image/Branding */}
-      <div className="hidden lg:flex w-1/2 relative bg-gradient-to-br from-purple-600 to-primary overflow-hidden items-center justify-center p-12">
+      <div className="hidden lg:flex w-1/2 relative bg-linear-to-br from-purple-600 to-primary overflow-hidden items-center justify-center p-12">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=2574&auto=format&fit=crop')] bg-cover bg-center opacity-20 mix-blend-overlay"></div>
 
         <div className="relative z-10 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-12 max-w-lg">
@@ -77,6 +80,31 @@ export default function RegisterPage() {
           <div className="mb-10">
             <h2 className="text-3xl font-bold text-foreground mb-2">Create Account</h2>
             <p className="text-muted-foreground">Fill in the details below to get started.</p>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 mb-6">
+            <label className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 cursor-pointer">
+              <input
+                type="radio"
+                name="role"
+                value="BUYER"
+                checked={role === 'BUYER'}
+                onChange={() => setRole('BUYER')}
+                className="accent-primary"
+              />
+              <span className="text-sm text-slate-800">Buyer Account</span>
+            </label>
+            <label className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 cursor-pointer">
+              <input
+                type="radio"
+                name="role"
+                value="SELLER"
+                checked={role === 'SELLER'}
+                onChange={() => setRole('SELLER')}
+                className="accent-primary"
+              />
+              <span className="text-sm text-slate-800">Seller Account</span>
+            </label>
           </div>
 
           {success && (
@@ -121,6 +149,32 @@ export default function RegisterPage() {
                 placeholder="••••••••"
               />
             </div>
+
+            {role === 'SELLER' && (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">Nama Toko</label>
+                  <input
+                    type="text"
+                    value={storeName}
+                    onChange={(e) => setStoreName(e.target.value)}
+                    className="w-full px-4 py-3 bg-muted border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all text-foreground placeholder-muted-foreground"
+                    placeholder="Velora Store"
+                    required={role === 'SELLER'}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">Kategori Toko</label>
+                  <input
+                    type="text"
+                    value={storeCategory}
+                    onChange={(e) => setStoreCategory(e.target.value)}
+                    className="w-full px-4 py-3 bg-muted border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all text-foreground placeholder-muted-foreground"
+                    placeholder="Electronics, Fashion, Home"
+                  />
+                </div>
+              </div>
+            )}
 
             {error && (
               <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg">

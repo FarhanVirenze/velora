@@ -12,6 +12,7 @@ export interface UserProfile {
   gender: string | null;
   dob: string | null;
   settings: any | null;
+  role: 'BUYER' | 'SELLER' | 'SUPERADMIN';
 }
 
 export const useProfile = () => {
